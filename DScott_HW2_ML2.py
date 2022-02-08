@@ -38,8 +38,6 @@ from xgboost import XGBClassifier
 
 #%%% resources
 #https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.ParameterGrid.html
-#C:/Users/drsco/Documents/GitHub/StudentsPerformance.csv
-#h/jbcroom/
 #https://scikit-learn.org/stable/datasets/real_world.html
 #https://realpython.com/python-csv/
 #https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html
