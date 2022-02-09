@@ -12,18 +12,12 @@ Created on Wed Jan 26 19:16:22 2022
 #%%% imports
 # Homework 2
 import numpy as np
-from sklearn.metrics import accuracy_score # other metrics too pls!
-from sklearn.ensemble import RandomForestClassifier # more!
+from sklearn.metrics import accuracy_score 
+from sklearn.ensemble import RandomForestClassifier 
 from sklearn.model_selection import KFold
-
-import numpy as np
 import itertools
 import matplotlib.pyplot as plt
 from sklearn import datasets
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import KFold 
-from sklearn.model_selection import GridSearchCV
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
@@ -44,7 +38,7 @@ from xgboost import XGBClassifier
 
 
 #%%%
-model_dict = {
+models = {
     'LogisticRegression': LogisticRegression,
     'KNeighboursClassifier': KNeighborsClassifier,
     #I have never used XGB but someone mentioned it and here we are
@@ -53,29 +47,37 @@ model_dict = {
     'RandomForestClassifier': RandomForestClassifier
 }
 #functions we want to use and their hyper parameters  
-model_params_dict = {
+#I am setting a random state for consistancy
+hyper_parms = {
     'LogisticRegression': {
+        'C': [0.001, 0.01, 0.1, 1, 10, 100],
+        'class_weight': ['balanced'],
+#        'random_state': [42],
+        'max_iter':[1000],
         'solver': ['newton-cg', 'sag', 'lbfgs'],
         'multi_class': ['ovr', 'multinomial']
         },    
     'KNeighboursClassifier': {
         'n_neighbors': [3,5,7,9,10,20],
         'weights': ['uniform', 'distance'],
-        'algorithm': ['ball_tree', 'kd_tree', 'brute']
+        'algorithm': ['ball_tree', 'kd_tree', 'brute'],
+#        'random_state': [42]
         },
     'XGBClassifier': {
         'max_depth': range (2, 10, 1),
         'n_estimators': range(60, 220, 40),
         'learning_rate': [0.1, 0.01, 0.05],
         'use_label_encoder': [False],
-        'eval_metric': ['mlogloss']
+        'eval_metric': ['mlogloss'],
+#        'random_state': [42]
         },
     'RandomForestClassifier':{ 
-        "n_estimators"      : [100, 200, 500, 1000],
-        "max_features"      : ["auto", "sqrt", "log2"],
-        "bootstrap": [True],
+        "n_estimators" : [100, 200, 500, 1000],
+        'max_depth': [ 50, 100],
+        "max_features" : ["auto", "sqrt", "log2"],
         "criterion": ['gini', 'entropy'],
-        "oob_score": [True, False]
+        "oob_score": [True, False],
+#        'random_state': [42]
         }
 }
 #%%% given code by prof
@@ -102,12 +104,12 @@ def run(a_clf, data, clf_hyper={}):
 
 results = run(RandomForestClassifier, data, clf_hyper={})
 #LongLongLiveGridS#LongLon#LLongLiveGridSearch!gLiveGridSearch!
-#%%%
+#%%% data
 #load in data
 #good ol' iris from scikit-learn
 iris_data, iris_target = datasets.load_iris(return_X_y=True)
 data = (iris_data, iris_target,n_folds)
-#%%%
+#%%% breakdown node
 def groupClassifiers(results_dict):
     clfsAccuracyDict = {}
     
@@ -131,13 +133,13 @@ def groupClassifiers(results_dict):
 
     return(clfsAccuracyDict)
 
-#%%%
+#%%% plotting
 def plot_parameters(clfsAccuracyDict,filename='clf_Histograms_'):
     # for naming the plots
     filename_prefix = filename
 
     # initialize the plot_num counter for incrementing in the loop below
-    plot_num = 1
+    plot_num = 0
 
     # Adjust matplotlib subplots for easy terminal window viewing
     left  = 0.125  # the left side of the subplots of the figure
@@ -176,33 +178,24 @@ def plot_parameters(clfsAccuracyDict,filename='clf_Histograms_'):
         plot_num = plot_num+1 # increment the plot_num counter by 1
     plt.show()
 
-#%%%
-def hyper_search(model_dict, param_dict, data, filename=''):
-    # define empty dictionaries to start
+#%%% final model
+def final_model(models, hyper_parms, data, filename=''):
+    #empty dicts to add to later
+    #storage
     np_results = {}
     accuracyDics = {}
-    
-    # iterate through the model dictionary to execute each model
-    for key, value in model_dict.items():
-        # just for grins, let the user know which model we're processing
+    #print out which model we are looking at
+    for key, value in models.items():
         print('Processing Model: ', key)
-        
-        # get the hyper parameter dictionary listings for the specific model
-        paramDict = param_dict[key]
-        
-        # take our hyper parameter dictionary and use itertools to build out
-        # all possible permutations for execution
-        keys1, values1 = zip(*paramDict.items())
+        #this takes the specific key value for each model as we are looping
+        hp_dict = hyper_parms[key]
+        #this will zip together the key and all the possible values given in the hyper_parm
+        keys1, values1 = zip(*hp_dict.items())
+        #this creates a dictionary of each of the possible hyper_parms
         paramList = [dict(zip(keys1, v)) for v in itertools.product(*values1)]
-        
-        # iterate through the hyper parameter permutations and execute them
-        for dic in paramList:
-            # execute the run function on each model type and hyper parameter configuration
-            # add the results to the np_results dictionary for use in other methods
+        for dic in paramList: #this takes the dictionary created above and loops through it and runs them all
             np_results.update(run(value, data, dic))
-           # results = run(value, data, dic)
             
-        # find the classifiers for plotting from all the permutations we've run through
         # this will get us to the "best" permutation of results to plot and prevent us
         # from printing 100's of plots
         accuracyDics.update(groupClassifiers(np_results))
@@ -211,4 +204,4 @@ def hyper_search(model_dict, param_dict, data, filename=''):
     #plot the parameters
     plot_parameters(accuracyDics,filename)
 #%%% Run
-hyper_search(model_dict, model_params_dict, data, "dylan_test_")
+final_model(models, hyper_parms, data, "dylan_test_")
