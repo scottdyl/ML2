@@ -50,10 +50,12 @@ models = {
 #I am setting a random state for consistancy
 hyper_parms = {
     'LogisticRegression': {
-        'C': [0.001, 0.01, 0.1, 1, 10, 100],
+        #change up the c values because they were too small
+        'C': [100,250,500],
         'class_weight': ['balanced'],
 #        'random_state': [42],
-        'max_iter':[1000],
+#i have to up the max iter to avid error since the data isn't fit for logisticReg
+        'max_iter':[10000],
         'solver': ['newton-cg', 'sag', 'lbfgs'],
         'multi_class': ['ovr', 'multinomial']
         },    
@@ -62,24 +64,24 @@ hyper_parms = {
         'weights': ['uniform', 'distance'],
         'algorithm': ['ball_tree', 'kd_tree', 'brute'],
 #        'random_state': [42]
-        },
-    'XGBClassifier': {
-        'max_depth': range (2, 10, 1),
-        'n_estimators': range(60, 220, 40),
-        'learning_rate': [0.1, 0.01, 0.05],
-        'use_label_encoder': [False],
-        'eval_metric': ['mlogloss'],
+          },
+      'XGBClassifier': {
+          'max_depth': range (2, 10, 1),
+          'n_estimators': range(60, 220, 40),
+          'learning_rate': [0.1, 0.01, 0.05],
+          'use_label_encoder': [False],
+          'eval_metric': ['mlogloss'],
 #        'random_state': [42]
-        },
-    'RandomForestClassifier':{ 
-        "n_estimators" : [100, 200, 500, 1000],
-        'max_depth': [ 50, 100],
-        "max_features" : ["auto", "sqrt", "log2"],
-        "criterion": ['gini', 'entropy'],
-        "oob_score": [True, False],
+          },
+      'RandomForestClassifier':{ 
+          "n_estimators" : [100, 200, 500, 1000],
+          'max_depth': [ 50, 100],
+          "max_features" : ["auto", "sqrt", "log2"],
+          "criterion": ['gini', 'entropy'],
+          "oob_score": [True, False],
 #        'random_state': [42]
-        }
-}
+          }
+ }
 #%%% given code by prof
 M = np.array([[1,2],[3,4],[4,5],[4,5],[4,5],[4,5],[4,5],[4,5]])
 L = np.ones(M.shape[0])
@@ -107,81 +109,55 @@ results = run(RandomForestClassifier, data, clf_hyper={})
 #%%% data
 #load in data
 #good ol' iris from scikit-learn
+n_folds = 5
 iris_data, iris_target = datasets.load_iris(return_X_y=True)
 data = (iris_data, iris_target,n_folds)
 #%%% breakdown node
+#help came from office hours to help unpack clfs for plotting
 def groupClassifiers(results_dict):
     clfsAccuracyDict = {}
     
     for key in results_dict:
         k1 = results_dict[key]['clf']
         v1 = results_dict[key]['accuracy']
-        k1Test = str(k1) #Since we have a number of k-folds for each classifier...
-                         #We want to prevent unique k1 values due to different "key" values
-                         #when we actually have the same classifer and hyper parameter settings.
-                         #So, we convert to a string
-
-        #String formatting
-        k1Test = k1Test.replace('            ',' ') # remove large spaces from string
-        k1Test = k1Test.replace('          ',' ')
-
-        #Then check if the string value 'k1Test' exists as a key in the dictionary
+        k1Test = str(k1) 
         if k1Test in clfsAccuracyDict:
-            clfsAccuracyDict[k1Test].append(v1) #append the values to create an array (techically a list) of values
+            clfsAccuracyDict[k1Test].append(v1) 
         else:
-            clfsAccuracyDict[k1Test] = [v1] #create a new key (k1Test) in clfsAccuracyDict with a new value, (v1)
-
+            clfsAccuracyDict[k1Test] = [v1] 
     return(clfsAccuracyDict)
 
 #%%% plotting
 def plot_parameters(clfsAccuracyDict,filename='clf_Histograms_'):
-    # for naming the plots
     filename_prefix = filename
-
-    # initialize the plot_num counter for incrementing in the loop below
     plot_num = 0
-
-    # Adjust matplotlib subplots for easy terminal window viewing
-    left  = 0.125  # the left side of the subplots of the figure
-    right = 0.9    # the right side of the subplots of the figure
-    bottom = 0.1   # the bottom of the subplots of the figure
-    top = 0.6      # the top of the subplots of the figure
-    wspace = 0.2   # the amount of width reserved for space between subplots,
-                   # expressed as a fraction of the average axis width
-    hspace = 0.2   # the amount of height reserved for space between subplots,
-                   # expressed as a fraction of the average axis height
-                   
-    # for determining maximum frequency (# of kfolds) for histogram y-axis
     n = max(len(v1) for k1, v1 in clfsAccuracyDict.items())
 
     #create the histograms
     #matplotlib is used to create the histograms: https://matplotlib.org/index.html
     for k1, v1 in clfsAccuracyDict.items():
-        # for each key in our clfsAccuracyDict, create a new histogram with a given key's values
-        fig = plt.figure(figsize =(10,10)) # This dictates the size of our histograms
-        ax  = fig.add_subplot(1, 1, 1) # As the ax subplot numbers increase here, the plot gets smaller
-        plt.hist(v1, facecolor='green', alpha=0.75) # create the histogram with the values
-        ax.set_title(k1, fontsize=25) # increase title fontsize for readability
-        ax.set_xlabel('Classifer Accuracy (By K-Fold)', fontsize=25) # increase x-axis label fontsize for readability
-        ax.set_ylabel('Frequency', fontsize=25) # increase y-axis label fontsize for readability
-        ax.xaxis.set_ticks(np.arange(0, 1.1, 0.1)) # The accuracy can only be from 0 to 1 (e.g. 0 or 100%)
-        ax.yaxis.set_ticks(np.arange(0, n+1, 1)) # n represents the number of k-folds
-        ax.xaxis.set_tick_params(labelsize=20) # increase x-axis tick fontsize for readability
-        ax.yaxis.set_tick_params(labelsize=20) # increase y-axis tick fontsize for readability
-        #ax.grid(True) # you can turn this on for a grid, but I think it looks messy here.
-
-        # pass in subplot adjustments from above.
-        plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-        plot_num_str = str(plot_num) #convert plot number to string
-        filename = filename_prefix + plot_num_str # concatenate the filename prefix and the plot_num_str
-        plt.savefig(filename, bbox_inches = 'tight') # save the plot to the user's working directory
-        plot_num = plot_num+1 # increment the plot_num counter by 1
+        fig = plt.figure(figsize =(10,10))
+        ax  = fig.add_subplot(1, 1, 1)
+        plt.hist(v1, alpha=0.75)
+        ax.set_title(k1)
+        ax.set_xlabel('Accuracy')
+        ax.set_ylabel('Frequency', fontsize=25)
+        ax.yaxis.set_ticks(np.arange(0, n+1, 1)) 
+        ax.grid(True) 
+        plot_num_str = str(plot_num) 
+        filename = filename_prefix + plot_num_str
+        plt.savefig(filename, bbox_inches = 'tight')
+        plot_num = plot_num+1 
     plt.show()
+    
+    for k1, v1 in clfsAccuracyDict.items():
+        
+        
+        plt.show()
 
 #%%% final model
 def final_model(models, hyper_parms, data, filename=''):
     #empty dicts to add to later
-    #storage
     np_results = {}
     accuracyDics = {}
     #print out which model we are looking at
@@ -195,13 +171,24 @@ def final_model(models, hyper_parms, data, filename=''):
         paramList = [dict(zip(keys1, v)) for v in itertools.product(*values1)]
         for dic in paramList: #this takes the dictionary created above and loops through it and runs them all
             np_results.update(run(value, data, dic))
-            
-        # this will get us to the "best" permutation of results to plot and prevent us
-        # from printing 100's of plots
+
         accuracyDics.update(groupClassifiers(np_results))
 
 
     #plot the parameters
     plot_parameters(accuracyDics,filename)
+#%% actual gridsearch
+from sklearn.model_selection import GridSearchCV
+
+def fit_model(train_features, train_actuals):
+        for name in models.keys():
+            est = models[name]
+            est_params = hyper_parms[name]
+            gscv = GridSearchCV(estimator=est, param_grid=est_params, cv=5)
+            gscv.fit(train_features, train_actuals)
+            print("best parameters are: {}".format(gscv.best_estimator_))
 #%%% Run
+#my model
 final_model(models, hyper_parms, data, "dylan_test_")
+#"real" gridsearch
+#fit_model(iris_target,iris_data)
