@@ -12,87 +12,87 @@ import numpy as np
 # This approach can prove helpful on any number of decision making problems that are currently not leveraging machine learning.  
 
 # You asked your 10 work friends to answer a survey. They gave you back the following dictionary object.  
-people = {'Jane': {'willingness to travel': 5
-                  ,'desire for new experience': 3
-                  ,'cost': 8 
-                  ,'indian food': 8 
-                  ,'mexican food': 9
-                  ,'hipster points': 1
-                  ,'vegitarian':  5
-                  }
-          ,'Max': {'willingness to travel': 9
-                  ,'desire for new experience': 6
-                  ,'cost': 9 
-                  ,'indian food': 3
-                  ,'mexican food': 4
-                  ,'hipster points': 1
-                  ,'vegitarian':  1
-                  }
-		   ,'Anna Maria': {'willingness to travel': 9
-                  ,'desire for new experience': 8
-                  ,'cost': 4 
-                  ,'indian food': 5
-                  ,'mexican food': 6
-                  ,'hipster points': 2
-                  ,'vegitarian':  1
-                  }
-		     ,'Letizia': {'willingness to travel': 9
-                  ,'desire for new experience': 8
-                  ,'cost': 2 
-                  ,'indian food': 8
-                  ,'mexican food': 3
-                  ,'hipster points': 5
-                  ,'vegitarian':  9
-                  }
-			  ,'Daniele': {'willingness to travel': 6
-                  ,'desire for new experience': 5
-                  ,'cost': 7 
-                  ,'indian food': 5
-                  ,'mexican food': 8
-                  ,'hipster points': 1
-                  ,'vegitarian':  5
-                  }
-			  ,'Brooke': {'willingness to travel': 3
-                  ,'desire for new experience': 3
-                  ,'cost': 4 
-                  ,'indian food': 9
-                  ,'mexican food': 3
-                  ,'hipster points': 7
-                  ,'vegitarian':  8
-                  }
-			  ,'David': {'willingness to travel': 5
-                  ,'desire for new experience': 3
-                  ,'cost': 6
-                  ,'indian food': 4
-                  ,'mexican food': 8
-                  ,'hipster points': 1
-                  ,'vegitarian':  5
-                  }
-			  ,'Joe': {'willingness to travel': 9
-                  ,'desire for new experience': 7
-                  ,'cost': 1
-                  ,'indian food': 8
-                  ,'mexican food': 5
-                  ,'hipster points': 1
-                  ,'vegitarian':  5
-                  }
-			  ,'Diana': {'willingness to travel': 3
-                  ,'desire for new experience': 2
-                  ,'cost': 7
-                  ,'indian food': 2
-                  ,'mexican food': 5
-                  ,'hipster points': 4
-                  ,'vegitarian':  8
-                  }
-			  ,'Jeremy': {'willingness to travel': 5
-                  ,'desire for new experience': 2
-                  ,'cost': 2
-                  ,'indian food': 6
-                  ,'mexican food': 8
-                  ,'hipster points': 1
-                  ,'vegitarian':  2
-                  }
-          }          
+people = {'Jane': {'willingness to travel': 1,
+				  'desire for new experience':5,
+				  'cost':1,
+				  #'indian food':1,
+				  #'Mexican food':1,
+				  #'hipster points':3,
+				  'vegetarian': 1,
+				  },
+		  'Bob': {'willingness to travel': 5,
+				  'desire for new experience':2,
+				  'cost':0,
+				  #'indian food':1,
+				  #'Mexican food':1,
+				  #'hipster points':3,
+				  'vegetarian': 1,
+				  },
+		  'Mary': {'willingness to travel': 4 ,
+				  'desire for new experience': 4,
+				  'cost': 5,
+				  #'indian food':1,
+				  #'Mexican food':1,
+				  #'hipster points':3,
+				  'vegetarian': 3,
+				  },
+		  'Mike': {'willingness to travel': 5,
+				  'desire for new experience': 1,
+				  'cost': 4,
+				  #'indian food':1,
+				  #'Mexican food':1,
+				  #'hipster points':3,
+				  'vegetarian': 3,
+				  },
+		  'Alice': {'willingness to travel': 4,
+				  'desire for new experience': 5,
+				  'cost': 1,
+				  #'indian food':1,
+				  #'Mexican food':1,
+				  #'hipster points':3,
+				  'vegetarian': 2,
+				  },
+		  'Skip': {'willingness to travel': 2,
+				  'desire for new experience': 2,
+				  'cost': 5,
+				  #'indian food':1,
+				  #'Mexican food':1,
+				  #'hipster points':3,
+				  'vegetarian': 2,
+				  },
+		  'Kira': {'willingness to travel': 1,
+				  'desire for new experience': 2,
+				  'cost': 5,
+				  #'indian food':1,
+				  #'Mexican food':1,
+				  #'hipster points':3,
+				  'vegetarian': 1,
+				  },
+		  'Moe': {'willingness to travel': 1,
+				  'desire for new experience': 3,
+				  'cost': 3,
+				  #'indian food':1,
+				  #'Mexican food':1,
+				  #'hipster points':3,
+				  'vegetarian': 5,
+				  },
+		  'Sara': {'willingness to travel': 2,
+				  'desire for new experience': 5,
+				  'cost': 1,
+				  #'indian food':1,
+				  #'Mexican food':1,
+				  #'hipster points':3,
+				  'vegetarian': 1,
+				  },
+		  'Tom': {'willingness to travel': 5,
+				  'desire for new experience': 1,	
+				  'cost': 1,
+				  #'indian food':1,
+				  #'Mexican food':1,
+				  #'hipster points':3,
+				  'vegetarian': 1,
+				  }                  
+		  }         
 
 # Transform the user data into a matrix(M_people). Keep track of column and row ids.   
 people_names = list(people)
@@ -105,43 +105,78 @@ for i, p in enumerate(people):
 print(M_people)
 # Next you collected data from an internet website. You got the following information.
 
-restaurants  = {'flacos':{'distance' : 3
-                        ,'novelty' : 2
-                        ,'cost': 1
-                        ,'average rating': 5
-                        ,'cuisine': 8
-                        ,'vegitarians': 3
-                        }
-				  ,'Pizza Hut':{'distance' : 9
-                        ,'novelty' : 1
-                        ,'cost': 9
-                        ,'average rating': 2
-                        ,'cuisine': 2
-                        ,'vegitarians': 4
-                        }
-				  ,'Flat Bread':{'distance' : 8
-                        ,'novelty' : 4
-                        ,'cost': 4
-                        ,'average rating': 7
-                        ,'cuisine': 8
-                        ,'vegitarians': 6
-                        }
-				  ,'10 Barrels':{'distance' : 6
-                        ,'novelty' : 6
-                        ,'cost': 5
-                        ,'average rating': 8
-                        ,'cuisine': 7
-                        ,'vegitarians': 4
-                        }
-				   ,'The Fork':{'distance' : 3
-                        ,'novelty' : 9
-                        ,'cost': 2
-                        ,'average rating': 7
-                        ,'cuisine': 8
-                        ,'vegitarians': 8
-                        }
+restaurants  = {'flacos':{'distance' : 2,
+						'novelty' : 3,
+						'cost': 4,
+						#'average rating': 5,
+						#'cuisine': 5,
+						'vegetarian': 5
+						},
+			  'Joes':{'distance' : 5,
+						'novelty' : 1,
+						'cost': 5,
+						#'average rating': 5,
+						#'cuisine': 5,
+						'vegetarian': 3
+					  },
+			  'Poke':{'distance' : 4,
+						'novelty' : 2,
+						'cost': 4,
+						#'average rating': 5,
+						#'cuisine': 5,
+						'vegetarian': 4
+					  },                      
+			  'Sush-shi':{'distance' : 4,
+						'novelty' : 3,
+						'cost': 4,
+						#'average rating': 5,
+						#'cuisine': 5,
+						'vegetarian': 4
+					  },
+			  'Chick Fillet':{'distance' : 3,
+						'novelty' : 2,
+						'cost': 5,
+						#'average rating': 5,
+						#'cuisine': 5,
+						'vegetarian': 5
+					  },
+			  'Mackie Des':{'distance' : 2,
+						'novelty' : 3,
+						'cost': 4,
+						#'average rating': 5,
+						#'cuisine': 5,
+						'vegetarian': 3
+					  },
+			  'Michaels':{'distance' : 2,
+						'novelty' : 1,
+						'cost': 1,
+						#'average rating': 5,
+						#'cuisine': 5,
+						'vegetarian': 5
+					  },
+			  'Amaze':{'distance' : 3,
+						'novelty' : 5,
+						'cost': 2,
+						#'average rating': 5,
+						#'cuisine': 5,
+						'vegetarian': 4
+					  },
+			  'Kappa':{'distance' : 5,
+						'novelty' : 1,
+						'cost': 2,
+						#'average rating': 5,
+						#'cuisine': 5,
+						'vegetarian': 3
+					  },
+			  'Mu':{'distance' : 3,
+						'novelty' : 1,
+						'cost': 5,
+						#'average rating': 5,
+						#'cuisine': 5,
+						'vegetarian': 3
+					  }                      
 }
-
+# Transform the restaurant data into a matrix(M_resturants) use the same column index.
 rest_names = list(restaurants)
 rest_cols =list(restaurants[rest_names[1]])
 
@@ -151,12 +186,15 @@ for i, r in enumerate(restaurants):
 
 print(M_restaurants)
 
-# Transform the restaurant data into a matrix(M_resturants) use the same column index.
+
+
 
 # The most important idea in this project is the idea of a linear combination.  
 # Informally describe what a linear combination is  and how it will relate to our restaurant matrix.
+print('Linear Combination: ','')
 
 # Choose a person and compute(using a linear combination) the top restaurant for them.  What does each entry in the resulting vector represent? 
+
 
 # Next, compute a new matrix (M_usr_x_rest  i.e. an user by restaurant) from all people.  What does the a_ij matrix represent? 
 
