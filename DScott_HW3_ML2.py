@@ -1,4 +1,7 @@
 import numpy as np
+#help with 0s like
+#https://numpy.org/doc/stable/reference/generated/numpy.zeros_like.html
+import scipy.stats as ss
 # Decision Making With Matrices
 
 # This is a pretty simple assignment.  You will do something you do everyday, but today it will be with matrix manipulations. 
@@ -186,7 +189,10 @@ for i, r in enumerate(restaurants):
 
 print(M_restaurants)
 
-
+#get rank from the ss package comes partly from this scipy.org page
+#https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.rankdata.html
+def getRank(data):
+	return(ss.rankdata(len(data)-ss.rankdata(data)+2,method='min'))
 
 
 # The most important idea in this project is the idea of a linear combination.  
@@ -194,13 +200,53 @@ print(M_restaurants)
 print('Linear Combination: ','')
 
 # Choose a person and compute(using a linear combination) the top restaurant for them.  What does each entry in the resulting vector represent? 
+# I bet Skip knows where some fire tacos are
+p = people_names.index('Skip')
+skip=np.dot(M_people[p,],M_restaurants.T)
 
-
+print(skip)
+print('Each entry vector represents: ','')
 # Next, compute a new matrix (M_usr_x_rest  i.e. an user by restaurant) from all people.  What does the a_ij matrix represent? 
+M_usr_x_rest=np.dot(M_restaurants,M_people.T)
+print(M_usr_x_rest)
+print('Each a_ij matrix represents: ','')
 
 # Sum all columns in M_usr_x_rest to get the optimal restaurant for all users.  What do the entries represent?
+rest_score  = M_usr_x_rest.sum(axis=1) 
+rank=0
+for i in reversed(np.argsort(rest_score)):
+    rank=rank+1
+    print(rank,rest_names[i], ":", rest_score[i])  
 
-# Now convert each row in the M_usr_x_rest into a ranking for each user and call it M_usr_x_rest_rank.   Do the same as above to generate the optimal restaurant choice.  
+rest_rank = getRank(rest_score)
+rest_best_id = np.flatnonzero(rest_rank ==1)[0]
+rest_best_score = rest_score[rest_best_id]
+rest_best_name = rest_names[rest_best_id]
+ 
+print("The winner is! ",rest_best_name," : ", rest_best_score)
+print('Each entery represents: ', '')
+
+# Now convert each row in the M_usr_x_rest into a ranking for each user and call it M_usr_x_rest_rank.   
+# Do the same as above to generate the optimal restaurant choice.  
+M_usr_x_rest_rank = np.zeros_like(M_usr_x_rest)
+
+for r in range(M_usr_x_rest.shape[1]):
+    M_usr_x_rest_rank[:,r] = getRank(M_usr_x_rest[:,r])
+#M_usr_x_rest_rank = [getRank(M_usr_x_rest[x,:]) for x in range(M_usr_x_rest.shape[0])]
+
+rest_score2   = np.sum(M_usr_x_rest_rank,axis=1)
+c=0
+for i in (np.argsort(rest_score2)):
+    c=c+1
+    print(c,". Restaurant",rest_names[i], " tot Score:", rest_score2[i]) #,"(", (120- rest_score2[i]),")")  
+
+rest_rank2 = ss.rankdata(rest_score2,method='min')
+rest_best_id2 = np.flatnonzero(rest_rank2 ==1)[0]
+rest_best_score2 = rest_score2[rest_best_id2]
+rest_best_name2 = rest_names[rest_best_id2]
+
+print("The winner is! ",rest_best_name2," : ", rest_best_score2)
+print('Each entery represents: ', '')
 
 # Why is there a difference between the two?  What problem arrives?  What does it represent in the real world?
 
